@@ -22,6 +22,42 @@ extension Variable: StringLiteralConvertible {
     }
 }
 
+extension Enum: StringLiteralConvertible {
+    init(stringLiteral value: String) {
+        try! self.init(name: value)
+    }
+    init(unicodeScalarLiteral value: String) {
+        try! self.init(name: value)
+    }
+    init(extendedGraphemeClusterLiteral value: String) {
+        try! self.init(name: value)
+    }
+}
+
+extension NamedType: StringLiteralConvertible {
+    init(stringLiteral value: String) {
+        try! self.init(name: value)
+    }
+    init(unicodeScalarLiteral value: String) {
+        try! self.init(name: value)
+    }
+    init(extendedGraphemeClusterLiteral value: String) {
+        try! self.init(name: value)
+    }
+}
+
+extension FragmentName: StringLiteralConvertible {
+    init(stringLiteral value: String) {
+        try! self.init(name: value)
+    }
+    init(unicodeScalarLiteral value: String) {
+        try! self.init(name: value)
+    }
+    init(extendedGraphemeClusterLiteral value: String) {
+        try! self.init(name: value)
+    }
+}
+
 extension Number: IntegerLiteralConvertible {
     init(integerLiteral value: Int) {
         self = Number(int: value, fraction: nil, exponent: nil)
@@ -31,5 +67,11 @@ extension Number: IntegerLiteralConvertible {
 extension Value: IntegerLiteralConvertible {
     init(integerLiteral value: Int) {
         self = .Number_(number: Number(int: value, fraction: nil, exponent: nil))
+    }
+}
+
+extension Value: BooleanLiteralConvertible {
+    init(booleanLiteral value: Bool) {
+        self = .Boolean_(bool: value)
     }
 }

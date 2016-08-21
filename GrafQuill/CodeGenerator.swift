@@ -45,13 +45,19 @@ extension Directive: CodeType {
 
 extension Enum: CodeType {
     func code(inout text: [String], tabs: Int) {
-        // TODO
+        text.append(self.name + " ")
     }
 }
 
 extension Number: CodeType {
     func code(inout text: [String], tabs: Int) {
-        // TODO
+        text.append("\(self.int)")
+        if let fraction = self.fraction {
+            text.append(".\(fraction)")
+        }
+        if let exponent = self.exponent {
+            text.append("e\(exponent)")
+        }
     }
 }
 
@@ -105,7 +111,8 @@ extension Value: CodeType {
 
 extension TypeCondition: CodeType {
     func code(inout text: [String], tabs: Int) {
-        text.append("on \(self.namedType) ")
+        text.append("on ")
+        self.namedType.code(&text, tabs: tabs)
     }
 }
 
@@ -128,6 +135,7 @@ extension Field: CodeType {
             }
             text.append(")")
         }
+        text.append(" ")
         for directive in self.directives {
             directive.code(&text, tabs: tabs)
         }
@@ -140,6 +148,7 @@ extension Field: CodeType {
 extension FragmentName: CodeType {
     func code(inout text: [String], tabs: Int) {
         text.append(self.name)
+        text.append(" ")
     }
 }
 
@@ -193,7 +202,7 @@ extension SelectionSet: CodeType {
 
 extension FragmentDefinition: CodeType {
     func code(inout text: [String], tabs: Int) {
-        text.append("fragment \(self.fragmentName) ")
+        self.fragmentName.code(&text, tabs: tabs)
         self.typeCondition.code(&text, tabs: tabs)
         for directive in self.directives {
             directive.code(&text, tabs: tabs)
@@ -211,6 +220,7 @@ extension OperationType: CodeType {
 extension NamedType: CodeType {
     func code(inout text: [String], tabs: Int) {
         text.append(name)
+        text.append(" ")
     }
 }
 
