@@ -43,36 +43,60 @@ extension Directive: CodeType {
     }
 }
 
+extension Enum: CodeType {
+    func code(inout text: [String], tabs: Int) {
+        // TODO
+    }
+}
+
+extension Number: CodeType {
+    func code(inout text: [String], tabs: Int) {
+        // TODO
+    }
+}
+
+extension List: CodeType {
+    func code(inout text: [String], tabs: Int) {
+        // TODO -- check.  is this right?
+        text.append("[\n")
+        for val in self.values {
+            text.append(indent(tabs + 1))
+            val.code(&text, tabs: tabs + 1)
+            text.append("\n")
+        }
+        text.append(indent(tabs) + "]")
+    }
+}
+
+extension Object: CodeType {
+    func code(inout text: [String], tabs: Int) {
+        // TODO check. is this right?
+        text.append("{\n")
+        for keyval in keyvals {
+            text.append(indent(tabs + 1))
+            keyval.code(&text, tabs: tabs + 1)
+            text.append("\n")
+        }
+        text.append(indent(tabs) + "}")
+    }
+}
+
 extension Value: CodeType {
     func code(inout text: [String], tabs: Int) {
         switch self {
-        case .BooleanValue(let bool):
+        case let .Boolean_(bool):
             text.append("\(bool)")
-        case .EnumValue(let string):
-            text.append(string)
-        case let .FloatValue(int, decimal):
-            text.append("\(int).\(decimal)")
-        case let .IntValue(int):
-            text.append("\(int)")
-        case let .ListValue(vals):
-            text.append("[\n")
-            for val in vals {
-                text.append(indent(tabs + 1))
-                val.code(&text, tabs: tabs + 1)
-                text.append("\n")
-            }
-            text.append(indent(tabs) + "]")
-        case let .ObjectValue(keyvals):
-            text.append("{\n")
-            for keyval in keyvals {
-                text.append(indent(tabs + 1))
-                keyval.code(&text, tabs: tabs + 1)
-                text.append("\n")
-            }
-            text.append(indent(tabs) + "}")
-        case let .StringValue(string):
+        case let .Enum_(value):
+            value.code(&text, tabs: tabs)
+        case let .Number_(number):
+            number.code(&text, tabs: tabs)
+        case let .List_(list):
+            list.code(&text, tabs: tabs)
+        case let .Object_(object):
+            object.code(&text, tabs: tabs)
+        case let .String_(string):
             text.append("\"\(string)\"")
-        case let .VariableValue(variable):
+        case let .Variable_(variable):
             variable.code(&text, tabs: tabs)
         }
     }
@@ -91,7 +115,7 @@ extension Alias: CodeType {
     }
 }
 
-extension SelectionField: CodeType {
+extension Field: CodeType {
     func code(inout text: [String], tabs: Int) {
         if let alias = self.alias {
             alias.code(&text, tabs: tabs)
@@ -119,7 +143,7 @@ extension FragmentName: CodeType {
     }
 }
 
-extension SelectionFragmentSpread: CodeType {
+extension FragmentSpread: CodeType {
     func code(inout text: [String], tabs: Int) {
         text.append("... ")
         self.fragmentName.code(&text, tabs: tabs)
@@ -129,7 +153,7 @@ extension SelectionFragmentSpread: CodeType {
     }
 }
 
-extension SelectionInlineFragment: CodeType {
+extension InlineFragment: CodeType {
     func code(inout text: [String], tabs: Int) {
         text.append("... ")
         if let typeCondition = self.typeCondition {
@@ -145,11 +169,11 @@ extension SelectionInlineFragment: CodeType {
 extension Selection: CodeType {
     func code(inout text: [String], tabs: Int) {
         switch self {
-        case let .Field(field):
+        case let .Field_(field):
             field.code(&text, tabs: tabs)
-        case let .FragmentSpread(fragmentSpread):
+        case let .FragmentSpread_(fragmentSpread):
             fragmentSpread.code(&text, tabs: tabs)
-        case let .InlineFragment(inlineFragment):
+        case let .InlineFragment_(inlineFragment):
             inlineFragment.code(&text, tabs: tabs)
         }
     }
@@ -184,62 +208,37 @@ extension OperationType: CodeType {
     }
 }
 
-extension ConstKeyVal: CodeType {
+extension NamedType: CodeType {
     func code(inout text: [String], tabs: Int) {
-        text.append("\(self.name):")
-        self.value.code(&text, tabs: tabs)
+        text.append(name)
     }
 }
 
-extension ConstValue: CodeType {
+extension ListType: CodeType {
     func code(inout text: [String], tabs: Int) {
-        switch self {
-        case .BooleanValue(let bool):
-            text.append("\(bool)")
-        case .EnumValue(let string):
-            text.append(string)
-        case let .FloatValue(int, decimal):
-            text.append("\(int).\(decimal)")
-        case let .IntValue(int):
-            text.append("\(int)")
-        case let .ConstListValue(vals):
-            text.append("[\n")
-            for val in vals {
-                text.append(indent(tabs + 1))
-                val.code(&text, tabs: tabs + 1)
-                text.append("\n")
-            }
-            text.append(indent(tabs) + "]")
-        case let .ConstObjectValue(keyvals):
-            text.append("{\n")
-            for keyval in keyvals {
-                text.append(indent(tabs + 1))
-                keyval.code(&text, tabs: tabs + 1)
-                text.append("\n")
-            }
-            text.append(indent(tabs) + "}")
-        case let .StringValue(string):
-            text.append("\"\(string)\"")
-        }
+        text.append("[")
+        type.code(&text, tabs: tabs)
+        text.append("]")
     }
 }
 
 extension Type: CodeType {
     func code(inout text: [String], tabs: Int) {
-        let addBang: Bool
-        switch self {
-        case let .ListType(type, isNonNull):
-            text.append("[")
-            type.code(&text, tabs: tabs)
-            text.append("]")
-            addBang = isNonNull
-        case let .NamedType(name, isNonNull):
-            text.append(name)
-            addBang = isNonNull
+        switch self.type {
+        case let .Left(namedType):
+            namedType.code(&text, tabs: tabs)
+        case let .Right(listType):
+            listType.code(&text, tabs: tabs)
         }
-        if addBang {
+        if self.isNonNull {
             text.append("!")
         }
+    }
+}
+
+extension DefaultValue: CodeType {
+    func code(inout text: [String], tabs: Int) {
+        self.value.code(&text, tabs: tabs)
     }
 }
 
@@ -273,11 +272,11 @@ extension OperationDefinition: CodeType {
 extension Definition: CodeType {
     func code(inout text: [String], tabs: Int) {
         switch self {
-        case let .Fragment(fragmentDefinition):
-            fragmentDefinition.code(&text, tabs: tabs)
-        case let .Operation(operationDefinition):
-            operationDefinition.code(&text, tabs: tabs)
-        case let .SelectionSetDefinition(selectionSet):
+        case let .Fragment_(fragment):
+            fragment.code(&text, tabs: tabs)
+        case let .Operation_(operation):
+            operation.code(&text, tabs: tabs)
+        case let .SelectionSet_(selectionSet):
             selectionSet.code(&text, tabs: tabs)
         }
     }

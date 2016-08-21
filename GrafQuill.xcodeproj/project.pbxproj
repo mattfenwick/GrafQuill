@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		415C043B1D69E3A6008572B4 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = 415C043A1D69E3A6008572B4 /* Either.swift */; };
 		41955C2C1D64B9370028AD3B /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41955C2B1D64B9370028AD3B /* main.swift */; };
 		41955C331D64B98D0028AD3B /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41955C321D64B98D0028AD3B /* Model.swift */; };
 		41955C351D64FD570028AD3B /* Array1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41955C341D64FD570028AD3B /* Array1.swift */; };
@@ -28,6 +29,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		415C043A1D69E3A6008572B4 /* Either.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Either.swift; sourceTree = "<group>"; };
 		41955C281D64B9370028AD3B /* GrafQuill */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GrafQuill; sourceTree = BUILT_PRODUCTS_DIR; };
 		41955C2B1D64B9370028AD3B /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		41955C321D64B98D0028AD3B /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 				41955C361D6505DC0028AD3B /* CodeGenerator.swift */,
 				41955C381D65F6600028AD3B /* CodeGeneratorFail.swift */,
 				41955C3A1D6634C10028AD3B /* LiteralConvertible.swift */,
+				415C043A1D69E3A6008572B4 /* Either.swift */,
 			);
 			path = GrafQuill;
 			sourceTree = "<group>";
@@ -134,6 +137,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				415C043B1D69E3A6008572B4 /* Either.swift in Sources */,
 				41955C371D6505DC0028AD3B /* CodeGenerator.swift in Sources */,
 				41955C2C1D64B9370028AD3B /* main.swift in Sources */,
 				41955C351D64FD570028AD3B /* Array1.swift in Sources */,
@@ -261,6 +265,7 @@
 				41955C311D64B9370028AD3B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

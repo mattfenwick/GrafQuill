@@ -10,12 +10,15 @@ import Foundation
 
 enum ModelError: ErrorType {
     case IllegalName(name: String)
+    case IllegalVariableInDefaultValue(name: String)
 }
 
-// TODO add Name struct in order to house name validation logic (disallowed chars)
-
 struct Variable {
-    let name: String // TODO check for allowed, disallowed characters
+    let name: String
+    init(name: String) throws {
+        // TODO check for allowed, disallowed characters
+        self.name = name
+    }
 }
 
 struct Argument {
@@ -25,54 +28,73 @@ struct Argument {
 
 typealias KeyVal = Argument
 
-struct ConstKeyVal {
-    let name: String
-    let value: ConstValue
-}
-
 struct Directive {
     let name: String
     let args: [Argument]
 }
 
-indirect enum Type {
-    case NamedType(name: String, isNonNull: Bool)
-    case ListType(type: Type, isNonNull: Bool)
+struct NamedType {
+    let name: String
+    init(name: String) throws {
+        // TODO check for matching /[_A-Za-z][_0-9A-Za-z]*/
+        self.name = name
+    }
 }
 
-enum ConstValue {
-    case IntValue(int: Int)
-    case FloatValue(int: Int, decimal: Int)
-    case StringValue(string: String)
-    case BooleanValue(bool: Bool)
-    case EnumValue(string: String)
-    case ConstListValue(values: [ConstValue]) // interesting that this doesn't force the enum to be labeled 'indirect'
-    case ConstObjectValue(keyvals: [ConstKeyVal])
+class ListType {
+    let type: Type
+    init(type: Type) {
+        self.type = type
+    }
 }
 
-indirect enum Value {
-    case IntValue(int: Int)
-    case FloatValue(int: Int, decimal: Int)
-    case StringValue(string: String)
-    case BooleanValue(bool: Bool)
-    case EnumValue(string: String)
-    case ListValue(values: [Value])
-    case ObjectValue(keyvals: [KeyVal])
-    case VariableValue(variable: Variable)
+struct Type {
+    let type: Either<NamedType, ListType>
+    let isNonNull: Bool
 }
 
-struct EnumValue {
+struct Number {
+    let int: Int
+    let fraction: Int?
+    let exponent: Int?
+}
+
+struct Enum {
     static let disallowedNames = Set(["true", "false", "null"])
     let name: String
     init(name: String) throws {
-        if EnumValue.disallowedNames.contains(name) {
+        if Enum.disallowedNames.contains(name) {
             throw ModelError.IllegalName(name: name)
         }
         self.name = name
     }
 }
 
-typealias DefaultValue = ConstValue
+struct List {
+    let values: [Value]
+}
+
+struct Object {
+    let keyvals: [KeyVal]
+}
+
+indirect enum Value {
+    case Number_(number: Number)
+    case String_(string: String)
+    case Boolean_(bool: Bool)
+    case Enum_(value: Enum)
+    case List_(list: List)
+    case Object_(object: Object)
+    case Variable_(variable: Variable)
+}
+
+struct DefaultValue {
+    let value: Value
+    init(value: Value) throws {
+        self.value = value
+        // TODO recursively ensure that there's no variables in `value`
+    }
+}
 
 struct VariableDefinition {
     let variable: Variable
@@ -81,7 +103,7 @@ struct VariableDefinition {
 }
 
 struct TypeCondition {
-    let namedType: String
+    let namedType: NamedType
 }
 
 struct FragmentName {
@@ -110,16 +132,16 @@ class SelectionSet {
 }
 
 enum Selection {
-    case Field(field: SelectionField)
-    case FragmentSpread(fragmentSpread: SelectionFragmentSpread)
-    case InlineFragment(inlineFragment: SelectionInlineFragment)
+    case Field_(field: Field)
+    case FragmentSpread_(fragmentSpread: FragmentSpread)
+    case InlineFragment_(inlineFragment: InlineFragment)
 }
 
 struct Alias {
     let name: String
 }
 
-struct SelectionField {
+struct Field {
     let alias: Alias?
     let name: String
     let arguments: [Argument]
@@ -127,12 +149,12 @@ struct SelectionField {
     let selectionSet: SelectionSet?
 }
 
-struct SelectionFragmentSpread {
+struct FragmentSpread {
     let fragmentName: FragmentName
     let directives: [Directive]
 }
 
-struct SelectionInlineFragment {
+struct InlineFragment {
     let typeCondition: TypeCondition?
     let directives: [Directive]
     let selectionSet: SelectionSet
@@ -152,29 +174,52 @@ struct OperationDefinition {
 }
 
 enum Definition {
-    case Fragment(fragmentDefinition: FragmentDefinition)
-    case Operation(operationDefinition: OperationDefinition)
-    case SelectionSetDefinition(selectionSet: SelectionSet)
+    case Fragment_(fragment: FragmentDefinition)
+    case Operation_(operation: OperationDefinition)
+    case SelectionSet_(selectionSet: SelectionSet)
 }
 
 struct Document {
     let definitions: [Definition]
 }
 
-// type definitions
+// MARK: - type definitions -- these are all REALLY rough and need to figure out a TON of corner cases
 
+// interface NamedEntity {
+//    name: String
+// }
 struct Interface {
     let name: String
-    let fields: Array1<ConstKeyVal>
+    // TODO shouldn't this be Dict1<FieldName, Type>  ?
+    let fields: Array1<Type> // TODO had Array1<ConstKeyVal> in an earlier version: not sure why
 }
 
+// type Person {
+//   name: String
+//   age: Int
+// }
+// type Person implements NamedEntity {
+//   name: String
+//   age: Int
+// }
 struct TypeDefinition {
     let name: String
     let interfaces: [Interface]
-    let fields: Array1<ConstKeyVal>
+    // TODO shouldn't this be Dict1<FieldName, Type>  ?
+    let fields: Array1<Type> // TODO had Array1<ConstKeyVal> in an earlier version: not sure why
 }
 
+// union SearchResult = Photo | Person
 struct Union {
     let name: String
-    let types: Array1<String> // TODO or should it be [Type] or [BaseType]?
+    let types: Array1<Type> // TODO or should it be [BaseType]  ?
+}
+
+// TODO don't know what this is
+// extend type QueryRoot {
+//   findDog(complex: ComplexInput): Dog
+//   booleanList(booleanListArg: [Boolean!]): Boolean
+// }
+struct Extends {
+
 }

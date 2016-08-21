@@ -12,18 +12,24 @@ import Foundation
 
 extension Variable: StringLiteralConvertible {
     init(stringLiteral value: String) {
-        self.init(name: value)
+        try! self.init(name: value)
     }
     init(unicodeScalarLiteral value: String) {
-        self.init(name: value)
+        try! self.init(name: value)
     }
     init(extendedGraphemeClusterLiteral value: String) {
-        self.init(name: value)
+        try! self.init(name: value)
+    }
+}
+
+extension Number: IntegerLiteralConvertible {
+    init(integerLiteral value: Int) {
+        self = Number(int: value, fraction: nil, exponent: nil)
     }
 }
 
 extension Value: IntegerLiteralConvertible {
     init(integerLiteral value: Int) {
-        self = .IntValue(int: value)
+        self = .Number_(number: Number(int: value, fraction: nil, exponent: nil))
     }
 }
