@@ -133,9 +133,8 @@ extension Field: CodeType {
             for arg in self.arguments {
                 arg.code(&text, tabs: tabs)
             }
-            text.append(")")
+            text.append(") ")
         }
-        text.append(" ")
         for directive in self.directives {
             directive.code(&text, tabs: tabs)
         }

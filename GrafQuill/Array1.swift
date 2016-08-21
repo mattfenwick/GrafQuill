@@ -13,6 +13,16 @@ struct Array1<T> {
     let xs: [T]
 }
 
+extension Array1 {
+    func map<U>(@noescape transform: T throws -> U) rethrows -> Array1<U> {
+        return Array1<U>(x: try transform(self.x), xs: try self.xs.map(transform))
+    }
+
+    func push(t: T) -> Array1<T> {
+        return Array1(x: x, xs: xs + [t])
+    }
+}
+
 // extension Array1: Equatable {}
 
 func ==<T: Equatable>(left: Array1<T>, right: Array1<T>) -> Bool {

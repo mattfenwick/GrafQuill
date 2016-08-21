@@ -147,6 +147,13 @@ struct Field {
     let arguments: [Argument]
     let directives: [Directive]
     let selectionSet: SelectionSet?
+    init(alias: Alias? = nil, name: String, arguments: [Argument] = [], directives: [Directive] = [], selectionSet: SelectionSet? = nil) {
+        self.alias = alias
+        self.name = name
+        self.arguments = arguments
+        self.directives = directives
+        self.selectionSet = selectionSet
+    }
 }
 
 struct FragmentSpread {
