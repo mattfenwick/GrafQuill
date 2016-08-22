@@ -212,7 +212,7 @@ extension FragmentDefinition: CodeType {
 
 extension OperationType: CodeType {
     func code(inout text: [String], tabs: Int) {
-        text.append(self.rawValue)
+        text.append(self.rawValue + " ")
     }
 }
 
@@ -247,6 +247,7 @@ extension Type: CodeType {
 
 extension DefaultValue: CodeType {
     func code(inout text: [String], tabs: Int) {
+        text.append("= ")
         self.value.code(&text, tabs: tabs)
     }
 }
@@ -272,6 +273,7 @@ extension OperationDefinition: CodeType {
             text.append("(")
             for variableDefinition in self.variableDefinitions {
                 variableDefinition.code(&text, tabs: tabs)
+                text.append(", ")
             }
             text.append(")")
         }
@@ -295,6 +297,7 @@ extension Document: CodeType {
     func code(inout text: [String], tabs: Int) {
         for definition in self.definitions {
             definition.code(&text, tabs: tabs)
+            text.append("\n")
         }
     }
 }

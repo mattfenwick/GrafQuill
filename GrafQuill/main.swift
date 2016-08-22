@@ -8,28 +8,28 @@
 
 import Foundation
 
-let value = Value.List_(list: List(values: [
+let value = Value.List_(List(values: [
     false,
     true,
-    Value.Object_(object: Object(keyvals: [
-        KeyVal(name: "abc", value: Value.Variable_(variable: "qrs")),
-        KeyVal(name: "a_name", value: Value.Variable_(variable: "long_variable_name")),
-        KeyVal(name: "obj", value: Value.List_(list: List(values: [
-            Value.Number_(number: 22)
+    Value.Object_(Object(keyvals: [
+        KeyVal(name: "abc", value: Value.Variable_("qrs")),
+        KeyVal(name: "a_name", value: Value.Variable_("long_variable_name")),
+        KeyVal(name: "obj", value: Value.List_(List(values: [
+            Value.Number_(22)
         ])))
     ])),
-    Value.Enum_(value: "hi")]))
+    Value.Enum_("hi")]))
 
 let field1 = Field(alias: Alias(name: "my_first_alias"), name: "first_field", arguments: [Argument(name: "my_first_argument", value: value)], directives: [Directive(name: "skip_directive", args: []), Directive(name: "ignore_directive", args: [])], selectionSet: nil)
 let field2: Field = Field(alias: nil, name: "second_field", arguments: [], directives: [], selectionSet: nil)
 let field3 = Field(alias: nil, name: "third_field", arguments: [], directives: [], selectionSet: nil)
-let selections = Array1(x: Selection.Field_(field: field1), xs: [field2, field3].map(Selection.Field_))
+let selections = Array1(x: Selection.Field_(field1), xs: [field2, field3].map(Selection.Field_))
 let fragmentDefinition = FragmentDefinition(fragmentName: "My_cute_fragment", typeCondition: TypeCondition(namedType: "OrangeType"), directives: [
         Directive(name: "my_first_directive", args: [])
     ], selectionSet: SelectionSet(selections: selections))
 
 let document = Document(definitions: [
-        Definition.Fragment_(fragment: fragmentDefinition)
+        Definition.Fragment_(fragmentDefinition)
     ])
 
 var text = [String]()

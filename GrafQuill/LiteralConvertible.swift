@@ -66,12 +66,12 @@ extension Number: IntegerLiteralConvertible {
 
 extension Value: IntegerLiteralConvertible {
     init(integerLiteral value: Int) {
-        self = .Number_(number: Number(int: value, fraction: nil, exponent: nil))
+        self = .Number_(Number(int: value, fraction: nil, exponent: nil))
     }
 }
 
 extension Value: BooleanLiteralConvertible {
     init(booleanLiteral value: Bool) {
-        self = .Boolean_(bool: value)
+        self = .Boolean_(value)
     }
 }

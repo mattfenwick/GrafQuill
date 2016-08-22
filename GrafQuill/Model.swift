@@ -55,7 +55,7 @@ struct Type {
 
 struct Number {
     let int: Int
-    let fraction: Int?
+    let fraction: UInt?
     let exponent: Int?
 }
 
@@ -79,13 +79,13 @@ struct Object {
 }
 
 indirect enum Value {
-    case Number_(number: Number)
-    case String_(string: String)
-    case Boolean_(bool: Bool)
-    case Enum_(value: Enum)
-    case List_(list: List)
-    case Object_(object: Object)
-    case Variable_(variable: Variable)
+    case Number_(Number)
+    case String_(String)
+    case Boolean_(Bool)
+    case Enum_(Enum)
+    case List_(List)
+    case Object_(Object)
+    case Variable_(Variable)
 }
 
 struct DefaultValue {
@@ -132,9 +132,9 @@ class SelectionSet {
 }
 
 enum Selection {
-    case Field_(field: Field)
-    case FragmentSpread_(fragmentSpread: FragmentSpread)
-    case InlineFragment_(inlineFragment: InlineFragment)
+    case Field_(Field)
+    case FragmentSpread_(FragmentSpread)
+    case InlineFragment_(InlineFragment)
 }
 
 struct Alias {
@@ -181,9 +181,9 @@ struct OperationDefinition {
 }
 
 enum Definition {
-    case Fragment_(fragment: FragmentDefinition)
-    case Operation_(operation: OperationDefinition)
-    case SelectionSet_(selectionSet: SelectionSet)
+    case Fragment_(FragmentDefinition)
+    case Operation_(OperationDefinition)
+    case SelectionSet_(SelectionSet)
 }
 
 struct Document {
