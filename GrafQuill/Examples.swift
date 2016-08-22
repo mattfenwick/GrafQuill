@@ -68,6 +68,10 @@ let vars = [VariableDefinition(
                 variable: try! Variable(name: "another_var"),
                 type: Type(type: .Left(try! NamedType(name: "AnotherType")), isNonNull: false),
                 defaultValue: try! DefaultValue(value: Value.Boolean_(false)))]
-let operation = OperationDefinition(operationType: .Query, name: "op-def", variableDefinitions: vars, directives: [], selectionSet: SelectionSet(selections: Array1(x: Selection.Field_(Field(name: "my_field")), xs: [])))
+let operation = OperationDefinition(operationType: .Query,
+            name: "op-def",
+            variableDefinitions: vars,
+            directives: [],
+            selectionSet: SelectionSet(selections: Array1(x: Selection.Field_(Field(name: "my_field")), xs: [])))
 let opDef = Definition.Operation_(operation)
 let zomgDocument = Document(definitions: [Definition.SelectionSet_(zomgSelectionSet), opDef])

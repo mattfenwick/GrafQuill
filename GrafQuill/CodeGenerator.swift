@@ -275,8 +275,12 @@ extension OperationDefinition: CodeType {
                 variableDefinition.code(&text, tabs: tabs)
                 text.append(", ")
             }
-            text.append(")")
+            text.append(") ")
         }
+        for directive in self.directives {
+            directive.code(&text, tabs: tabs)
+        }
+        self.selectionSet.code(&text, tabs: tabs)
     }
 }
 
