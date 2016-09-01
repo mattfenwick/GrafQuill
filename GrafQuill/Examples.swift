@@ -47,7 +47,6 @@ let zomgKind = Selection.Field_(Field(name: "kind"))
 let zomg = Selection.Field_(Field(alias: Alias(name: "zomg"),
         name: "__type",
         arguments: [Argument(name: "name", value: Value.String_("Int"))],
-        directives: [],
         selectionSet: SelectionSet(selections: Array1(x: zomgName, xs: [zomgKind]))))
 func nameKindDescField(name: String) -> Field {
     let selections = Array1(x: "name", xs: ["kind", "description"])
@@ -56,14 +55,14 @@ func nameKindDescField(name: String) -> Field {
 }
 let schemaSelections = Array1(x: "types", xs: ["queryType", "mutationType", "subscriptionType"])
     .map( { Selection.Field_(nameKindDescField($0)) } )
-    .push(Selection.Field_(Field(name: "directives", selectionSet: SelectionSet(selections: Array1(x: Selection.Field_(Field(name: "name")), xs: [])))))
+    .push(Selection.Field_(Field(name: "directives",
+        selectionSet: SelectionSet(selections: Array1(x: Selection.Field_(Field(name: "name")), xs: [])))))
 let schemaSelectionSet = SelectionSet(selections: schemaSelections)
 let schema = Selection.Field_(Field(name: "__schema", selectionSet: schemaSelectionSet))
 let zomgSelectionSet = SelectionSet(selections: Array1(x: zomg, xs: [schema]))
 let vars = [VariableDefinition(
                 variable: try! Variable(name: "my_var"),
-                type: Type(type: .Left(try! NamedType(name: "MyType")), isNonNull: true),
-                defaultValue: nil),
+                type: Type(type: .Left(try! NamedType(name: "MyType")), isNonNull: true)),
         VariableDefinition(
                 variable: try! Variable(name: "another_var"),
                 type: Type(type: .Left(try! NamedType(name: "AnotherType")), isNonNull: false),
@@ -71,7 +70,6 @@ let vars = [VariableDefinition(
 let operation = OperationDefinition(operationType: .Query,
             name: "op-def",
             variableDefinitions: vars,
-            directives: [],
             selectionSet: SelectionSet(selections: Array1(x: Selection.Field_(Field(name: "my_field")), xs: [])))
 let opDef = Definition.Operation_(operation)
 let zomgDocument = Document(definitions: [Definition.SelectionSet_(zomgSelectionSet), opDef])
