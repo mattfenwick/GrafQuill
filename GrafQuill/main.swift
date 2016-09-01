@@ -54,3 +54,5 @@ print("\n")
 var text3 = [String]()
 zomgDocument.code(&text3, tabs: 0)
 print(text3.joinWithSeparator(""))
+
+array1Tests()

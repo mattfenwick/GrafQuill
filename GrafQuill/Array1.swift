@@ -8,9 +8,17 @@
 
 import Foundation
 
-struct Array1<T> {
-    let x: T
-    let xs: [T]
+class Array1<T> {
+    private let x: T
+    private let xs: [T]
+    lazy var elements: [T] = {
+        return [self.x] + self.xs
+    }()
+
+    init(x: T, xs: [T]) {
+        self.x = x
+        self.xs = xs
+    }
 }
 
 extension Array1 {
@@ -32,29 +40,37 @@ func ==<T: Equatable>(left: Array1<T>, right: Array1<T>) -> Bool {
 }
 
 extension Array1: CollectionType {
-    typealias Generator = AnyGenerator<T>
+//    typealias Generator = AnyGenerator<T> // TODO does this do anything?
 
     var startIndex: Int { return 0 }
-    var endIndex: Int { return self.xs.endIndex + 1 }
+    var endIndex: Int { return self.elements.endIndex }
 
     subscript(position: Int) -> T {
-        if position == 0 {
-            return self.x
-        }
-        return self.xs[position - 1]
+        return self.elements[position]
     }
+
+    /* why can't you do this?
+    func generate() -> IndexingGenerator<Array1> {
+        return self.elements.generate()
+    }
+ */
 
     func generate() -> AnyGenerator<T> {
         var index = 0
         return AnyGenerator {
-            guard index > 0 else {
-                index += 1
-                return self.x
-            }
-            let currentIndex = index - 1
-            guard currentIndex < self.xs.count else { return nil }
+            let currentIndex = index
+            guard currentIndex < self.elements.count else { return nil }
             index += 1
-            return self.xs[currentIndex]
+            return self.elements[currentIndex]
         }
+    }
+}
+
+func array1Tests() {
+    let arr = Array1<Int>(x: 13, xs: [1, 8, 17])
+    let out = [arr[2], arr[0], arr[3], arr[1]]
+    print("\(arr.elements) \(out) [8, 13, 17, 1]")
+    for e in arr {
+        print("e: \(e)")
     }
 }
