@@ -39,20 +39,14 @@ let document = Document(definitions: [
         Definition.Fragment_(fragmentDefinition)
     ])
 
-var text = [String]()
-value.code(&text, tabs: 0)
-print(text.joinWithSeparator(""))
+print(value.code())
 
 print("\n")
 
-var text2 = [String]()
-document.code(&text2, tabs: 0)
-print(text2.joinWithSeparator(""))
+print(document.code())
 
 print("\n")
 
-var text3 = [String]()
-zomgDocument.code(&text3, tabs: 0)
-print(text3.joinWithSeparator(""))
+print(zomgDocument.code())
 
 array1Tests()

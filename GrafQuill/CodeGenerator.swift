@@ -13,6 +13,14 @@ protocol CodeType {
     func code(inout text: [String], tabs: Int)
 }
 
+extension CodeType {
+    func code() -> String {
+        var buffer = [String]()
+        self.code(&buffer, tabs: 0)
+        return buffer.joinWithSeparator("")
+    }
+}
+
 func indent(tabs: Int) -> String {
     return String(count: tabs, repeatedValue: Character("\t"))
 }
