@@ -31,6 +31,10 @@ typealias KeyVal = Argument
 struct Directive {
     let name: String
     let args: [Argument]
+    init(name: String, args: [Argument] = []) {
+        self.name = name
+        self.args = args
+    }
 }
 
 struct NamedType {
@@ -57,6 +61,11 @@ struct Number {
     let int: Int
     let fraction: UInt?
     let exponent: Int?
+    init(int: Int, fraction: UInt? = nil, exponent: Int? = nil) {
+        self.int = int
+        self.fraction = fraction
+        self.exponent = exponent
+    }
 }
 
 struct Enum {
@@ -100,6 +109,11 @@ struct VariableDefinition {
     let variable: Variable
     let type: Type
     let defaultValue: DefaultValue?
+    init(variable: Variable, type: Type, defaultValue: DefaultValue? = nil) {
+        self.variable = variable
+        self.type = type
+        self.defaultValue = defaultValue
+    }
 }
 
 struct TypeCondition {
@@ -121,6 +135,12 @@ struct FragmentDefinition {
     let typeCondition: TypeCondition
     let directives: [Directive]
     let selectionSet: SelectionSet
+    init(fragmentName: FragmentName, typeCondition: TypeCondition, directives: [Directive] = [], selectionSet: SelectionSet) {
+        self.fragmentName = fragmentName
+        self.typeCondition = typeCondition
+        self.directives = directives
+        self.selectionSet = selectionSet
+    }
 }
 
 // can't be a struct -- Swift disallows recursive value types
@@ -159,12 +179,21 @@ struct Field {
 struct FragmentSpread {
     let fragmentName: FragmentName
     let directives: [Directive]
+    init(fragmentName: FragmentName, directives: [Directive] = []) {
+        self.fragmentName = fragmentName
+        self.directives = directives
+    }
 }
 
 struct InlineFragment {
     let typeCondition: TypeCondition?
     let directives: [Directive]
     let selectionSet: SelectionSet
+    init(typeCondition: TypeCondition? = nil, directives: [Directive] = [], selectionSet: SelectionSet) {
+        self.typeCondition = typeCondition
+        self.directives = directives
+        self.selectionSet = selectionSet
+    }
 }
 
 enum OperationType: String {
@@ -178,6 +207,13 @@ struct OperationDefinition {
     let variableDefinitions: [VariableDefinition]
     let directives: [Directive]
     let selectionSet: SelectionSet
+    init(operationType: OperationType, name: String? = nil, variableDefinitions: [VariableDefinition] = [], directives: [Directive] = [], selectionSet: SelectionSet) {
+        self.operationType = operationType
+        self.name = name
+        self.variableDefinitions = variableDefinitions
+        self.directives = directives
+        self.selectionSet = selectionSet
+    }
 }
 
 enum Definition {

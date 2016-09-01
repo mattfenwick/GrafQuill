@@ -20,13 +20,20 @@ let value = Value.List_(List(values: [
     ])),
     Value.Enum_("hi")]))
 
-let field1 = Field(alias: Alias(name: "my_first_alias"), name: "first_field", arguments: [Argument(name: "my_first_argument", value: value)], directives: [Directive(name: "skip_directive", args: []), Directive(name: "ignore_directive", args: [])], selectionSet: nil)
-let field2: Field = Field(alias: nil, name: "second_field", arguments: [], directives: [], selectionSet: nil)
-let field3 = Field(alias: nil, name: "third_field", arguments: [], directives: [], selectionSet: nil)
-let selections = Array1(x: Selection.Field_(field1), xs: [field2, field3].map(Selection.Field_))
-let fragmentDefinition = FragmentDefinition(fragmentName: "My_cute_fragment", typeCondition: TypeCondition(namedType: "OrangeType"), directives: [
-        Directive(name: "my_first_directive", args: [])
-    ], selectionSet: SelectionSet(selections: selections))
+let field1 = Field(alias: Alias(name: "my_first_alias"),
+                   name: "first_field",
+                   arguments: [Argument(name: "my_first_argument", value: value)],
+                   directives: [Directive(name: "skip_directive"), Directive(name: "ignore_directive")])
+let field2 = Field(name: "second_field")
+let field3 = Field(name: "third_field")
+// let selections = Array1(x: Selection.Field_(field1), xs: [field2, field3].map(Selection.Field_))
+let selections = Array1(x: field1, xs: [field2, field3]).map(Selection.Field_)
+let fragmentDefinition = FragmentDefinition(fragmentName: "My_cute_fragment",
+    typeCondition: TypeCondition(namedType: "OrangeType"),
+    directives: [
+        Directive(name: "my_first_directive")
+    ],
+    selectionSet: SelectionSet(selections: selections))
 
 let document = Document(definitions: [
         Definition.Fragment_(fragmentDefinition)
